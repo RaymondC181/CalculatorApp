@@ -42,10 +42,12 @@ public class CalculatorGui implements ActionListener
         JFrame frame = new JFrame("Calculator");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         resultField.setEditable(false);
+//        frame.getContentPane().setBackground(Color.BLACK);
 
         JLabel welcomeLabel = new JLabel("Calculator App");  //<--
         welcomeLabel.setFont(new Font("Helvetica", Font.BOLD, 20));
         welcomeLabel.setForeground(Color.black);
+
 
         ImageIcon image = new ImageIcon("src/calc.jpg"); //<--
         Image imageData = image.getImage();
@@ -61,6 +63,7 @@ public class CalculatorGui implements ActionListener
         JButton mutiplyButton = new JButton("*");
         JButton enterButton = new JButton("=");
         JButton clearButton = new JButton("C");
+        JButton sqrtButton = new JButton("^");
         JButton b1 = new JButton("1");
         JButton b2 = new JButton("2");
         JButton b3 = new JButton("3");
@@ -89,6 +92,7 @@ public class CalculatorGui implements ActionListener
         divideButton.addActionListener(this);
         mutiplyButton.addActionListener(this);
         enterButton.addActionListener(this);
+        sqrtButton.addActionListener(this);
 
         JPanel numPanel = new JPanel();
         numPanel.add(b1);
@@ -102,6 +106,7 @@ public class CalculatorGui implements ActionListener
         numPanel.add(b9);
         numPanel.add(b0);
 
+
         JPanel entryPanel = new JPanel();
         entryPanel.add(addButton);
         entryPanel.add(minusButton);
@@ -109,6 +114,7 @@ public class CalculatorGui implements ActionListener
         entryPanel.add(mutiplyButton);
         entryPanel.add(enterButton);
         entryPanel.add(clearButton);
+        entryPanel.add(sqrtButton);
 
         JPanel welcomePanel = new JPanel();  //<--
         welcomePanel.add(welcomeLabel);
@@ -151,7 +157,7 @@ public class CalculatorGui implements ActionListener
         if(text.equals("=")) {
             String numExpression = num.replace("=", "");
             String str = numExpression.substring(numExpression.length()-1, numExpression.length());
-            if (str.equals("*")||str.equals("/")||str.equals("+")||str.equals("-"))
+            if (str.equals("*")||str.equals("/")||str.equals("+")||str.equals("-")||str.equals("^"))
             {
                 num = "ERROR";
                 resultField.setText(num);
