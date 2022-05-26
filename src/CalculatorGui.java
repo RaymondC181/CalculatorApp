@@ -171,7 +171,7 @@ public class CalculatorGui implements ActionListener
     }
 
 
-    //--------------------------------------------------------------------------------------------------
+    //---------------------------------------------------------------------------------------------------
     //https://stackoverflow.com/questions/3422673/how-to-evaluate-a-math-expression-given-in-string-form
 
     public static double eval(final String str) {
