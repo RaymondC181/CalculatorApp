@@ -32,7 +32,7 @@ public class CalculatorGui implements ActionListener
     private String num = "";
     GridLayout layout;
 
-    public CalculatorGui (){
+    public CalculatorGui (){ 
         resultField = new JTextField();
         setUp();
     }
@@ -42,14 +42,14 @@ public class CalculatorGui implements ActionListener
         JFrame frame = new JFrame("Calculator");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         resultField.setEditable(false);
-//        frame.getContentPane().setBackground(Color.BLACK);
 
-        JLabel welcomeLabel = new JLabel("Calculator App");  //<--
+
+        JLabel welcomeLabel = new JLabel("Calculator App");
         welcomeLabel.setFont(new Font("Helvetica", Font.BOLD, 20));
         welcomeLabel.setForeground(Color.black);
 
 
-        ImageIcon image = new ImageIcon("src/calc.jpg"); //<--
+        ImageIcon image = new ImageIcon("src/calc.jpg");
         Image imageData = image.getImage();
         Image scaledImage = imageData.getScaledInstance(100, 100, java.awt.Image.SCALE_SMOOTH);
         image = new ImageIcon(scaledImage);
@@ -57,13 +57,15 @@ public class CalculatorGui implements ActionListener
 
 
         frame.add(resultField);
-        JButton addButton = new JButton("+");
+//        JButton addButton = new JButton("+");       //<--
         JButton minusButton = new JButton("-");
         JButton divideButton = new JButton("/");
         JButton mutiplyButton = new JButton("*");
         JButton enterButton = new JButton("=");
         JButton clearButton = new JButton("C");
-        JButton sqrtButton = new JButton("^");
+        JButton sqrtButton = new JButton("sqrt(");
+        JButton frontButton = new JButton("(");
+        JButton backButton = new JButton(")");
         JButton b1 = new JButton("1");
         JButton b2 = new JButton("2");
         JButton b3 = new JButton("3");
@@ -87,12 +89,14 @@ public class CalculatorGui implements ActionListener
         b9.addActionListener(this);
         b0.addActionListener(this);
         clearButton.addActionListener(this);
-        addButton.addActionListener(this);
+//        addButton.addActionListener(this);       //<--
         minusButton.addActionListener(this);
         divideButton.addActionListener(this);
         mutiplyButton.addActionListener(this);
         enterButton.addActionListener(this);
         sqrtButton.addActionListener(this);
+        frontButton.addActionListener(this);
+        backButton.addActionListener(this);
 
         JPanel numPanel = new JPanel();
         numPanel.add(b1);
@@ -106,34 +110,38 @@ public class CalculatorGui implements ActionListener
         numPanel.add(b9);
         numPanel.add(b0);
 
+//        numPanel.add(addButton);        //<--
+        numPanel.add(minusButton);
+        numPanel.add(divideButton);
+        numPanel.add(mutiplyButton);
+        numPanel.add(sqrtButton);
+        numPanel.add(frontButton);
+        numPanel.add(backButton);
+        numPanel.add(clearButton);
+        numPanel.add(enterButton);
 
-        JPanel entryPanel = new JPanel();
-        entryPanel.add(addButton);
-        entryPanel.add(minusButton);
-        entryPanel.add(divideButton);
-        entryPanel.add(mutiplyButton);
-        entryPanel.add(enterButton);
-        entryPanel.add(clearButton);
-        entryPanel.add(sqrtButton);
 
-        JPanel welcomePanel = new JPanel();  //<--
-        welcomePanel.add(welcomeLabel);
+        JPanel welcomePanel = new JPanel();
         welcomePanel.add(pictureLabel);
+        welcomePanel.add(welcomeLabel);
 
-        Border border = BorderFactory.createLineBorder(Color.BLACK, 5);  //<--
+        Border border = BorderFactory.createLineBorder(Color.BLACK, 5);
         resultField.setBorder(border);
         
 
         frame.add(resultField,BorderLayout.NORTH);
-        frame.add(entryPanel, BorderLayout.SOUTH);
         frame.add(numPanel, BorderLayout.CENTER);
-        frame.add(welcomePanel, BorderLayout.SOUTH); //<--
+        frame.add(welcomePanel, BorderLayout.SOUTH);
 
-        layout = new GridLayout(4, 4);
+        layout = new GridLayout(3, 5);
         frame.setLayout(layout);
 
-        frame.setSize(200, 550);
+        //length, width//
+        numPanel.setSize(100, 100);
+        welcomeLabel.setSize(100, 100);
+        frame.setSize(200, 505);
         frame.setVisible(true);
+
     }
 
     public void actionPerformed(ActionEvent e) {
@@ -156,8 +164,8 @@ public class CalculatorGui implements ActionListener
 
         if(text.equals("=")) {
             String numExpression = num.replace("=", "");
-            String str = numExpression.substring(numExpression.length()-1, numExpression.length());
-            if (str.equals("*")||str.equals("/")||str.equals("+")||str.equals("-")||str.equals("^"))
+            String str = numExpression.substring(numExpression.length()-1);
+            if (str.equals("*")||str.equals("/")||str.equals("+")||str.equals("-")||str.equals("sqrt("))
             {
                 num = "ERROR";
                 resultField.setText(num);
@@ -167,105 +175,16 @@ public class CalculatorGui implements ActionListener
             {
                 num = "";
                 resultField.setText(num);
-                //evaluate the math expression in string form and set the result field to the result
 
-                resultField.setText("Answer: " + eval(numExpression));
+                CalculatorNetworking c = new CalculatorNetworking();
+                resultField.setText(c.makeAPICallForCurrent(numExpression));
             }
             System.out.println(numExpression);
         }
 
     }
 
-
-    //---------------------------------------------------------------------------------------------------
+    //reference:
     //https://stackoverflow.com/questions/3422673/how-to-evaluate-a-math-expression-given-in-string-form
-
-    public static double eval(final String str) {
-        return new Object() {
-            int pos = -1, ch;
-
-            void nextChar() {
-                ch = (++pos < str.length()) ? str.charAt(pos) : -1;
-            }
-
-            boolean eat(int charToEat) {
-                while (ch == ' ') nextChar();
-                if (ch == charToEat) {
-                    nextChar();
-                    return true;
-                }
-                return false;
-            }
-
-            double parse() {
-                nextChar();
-                double x = parseExpression();
-                if (pos < str.length()) throw new RuntimeException("Unexpected: " + (char)ch);
-                return x;
-            }
-
-            // Grammar:
-            // expression = term | expression `+` term | expression `-` term
-            // term = factor | term `*` factor | term `/` factor
-            // factor = `+` factor | `-` factor | `(` expression `)` | number
-            //        | functionName `(` expression `)` | functionName factor
-            //        | factor `^` factor
-
-            double parseExpression() {
-                double x = parseTerm();
-                for (;;) {
-                    if      (eat('+')) x += parseTerm(); // addition
-                    else if (eat('-')) x -= parseTerm(); // subtraction
-                    else return x;
-                }
-            }
-
-            double parseTerm() {
-                double x = parseFactor();
-                for (;;) {
-                    if      (eat('*')) x *= parseFactor(); // multiplication
-                    else if (eat('/')) x /= parseFactor(); // division
-                    else return x;
-                }
-            }
-
-            double parseFactor() {
-                if (eat('+')) return +parseFactor(); // unary plus
-                if (eat('-')) return -parseFactor(); // unary minus
-
-                double x;
-                int startPos = this.pos;
-                if (eat('(')) { // parentheses
-                    x = parseExpression();
-                    if (!eat(')')) throw new RuntimeException("Missing ')'");
-                } else if ((ch >= '0' && ch <= '9') || ch == '.') { // numbers
-                    while ((ch >= '0' && ch <= '9') || ch == '.') nextChar();
-                    x = Double.parseDouble(str.substring(startPos, this.pos));
-                } else if (ch >= 'a' && ch <= 'z') { // functions
-                    while (ch >= 'a' && ch <= 'z') nextChar();
-                    String func = str.substring(startPos, this.pos);
-                    if (eat('(')) {
-                        x = parseExpression();
-                        if (!eat(')')) throw new RuntimeException("Missing ')' after argument to " + func);
-                    } else {
-                        x = parseFactor();
-                    }
-                    if (func.equals("sqrt")) x = Math.sqrt(x);
-                    else if (func.equals("sin")) x = Math.sin(Math.toRadians(x));
-                    else if (func.equals("cos")) x = Math.cos(Math.toRadians(x));
-                    else if (func.equals("tan")) x = Math.tan(Math.toRadians(x));
-                    else throw new RuntimeException("Unknown function: " + func);
-                } else {
-                    throw new RuntimeException("Unexpected: " + (char)ch);
-                }
-
-                if (eat('^')) x = Math.pow(x, parseFactor()); // exponentiation
-
-                return x;
-            }
-        }.parse();
-    }
-    //--------------------------------------------------------------------------------------------------
-
 
 }
