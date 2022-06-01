@@ -30,10 +30,19 @@ public class CalculatorGui implements ActionListener
 {
     private JTextField resultField;
     private String num = "";
+    private JButton blue;
+    private JButton white;
+    private JButton gray;
+    private JFrame newFrame;
+    private Icon settingIcon;
+    private JButton settings;
     GridLayout layout;
 
     public CalculatorGui (){ 
         resultField = new JTextField();
+        blue = new JButton("Blue");
+        white = new JButton("White");
+        gray = new JButton("Gray");
         setUp();
     }
 
@@ -43,11 +52,14 @@ public class CalculatorGui implements ActionListener
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         resultField.setEditable(false);
 
-
         JLabel welcomeLabel = new JLabel("Calculator App");
         welcomeLabel.setFont(new Font("Helvetica", Font.BOLD, 20));
         welcomeLabel.setForeground(Color.black);
 
+        ImageIcon set = new ImageIcon("src/settings.jpg");                                     //<-- settingImage
+        Image setData = set.getImage();
+        Image scaledSetImage = setData.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH);
+        settingIcon = new ImageIcon(scaledSetImage);
 
         ImageIcon image = new ImageIcon("src/calc.jpg");
         Image imageData = image.getImage();
@@ -55,9 +67,8 @@ public class CalculatorGui implements ActionListener
         image = new ImageIcon(scaledImage);
         JLabel pictureLabel = new JLabel(image);
 
-
         frame.add(resultField);
-//        JButton addButton = new JButton("+");       //<---
+//        JButton addButton = new JButton("+");       //<---     addition button
         JButton minusButton = new JButton("-");
         JButton divideButton = new JButton("/");
         JButton mutiplyButton = new JButton("*");
@@ -66,6 +77,8 @@ public class CalculatorGui implements ActionListener
         JButton sqrtButton = new JButton("sqrt(");
         JButton frontButton = new JButton("(");
         JButton backButton = new JButton(")");
+//        JButton settings = new JButton("Settings");   //<--
+         settings = new JButton(settingIcon);   //<--              settingIcon to a button
         JButton b1 = new JButton("1");
         JButton b2 = new JButton("2");
         JButton b3 = new JButton("3");
@@ -77,6 +90,9 @@ public class CalculatorGui implements ActionListener
         JButton b9 = new JButton("9");
         JButton b0 = new JButton("0");
 
+        blue.addActionListener(this);
+        white.addActionListener(this);
+        gray.addActionListener(this);
 
         b1.addActionListener(this);
         b2.addActionListener(this);
@@ -89,7 +105,7 @@ public class CalculatorGui implements ActionListener
         b9.addActionListener(this);
         b0.addActionListener(this);
         clearButton.addActionListener(this);
-//        addButton.addActionListener(this);       //<--
+//        addButton.addActionListener(this);       //<--      addActionListener for addition
         minusButton.addActionListener(this);
         divideButton.addActionListener(this);
         mutiplyButton.addActionListener(this);
@@ -97,6 +113,7 @@ public class CalculatorGui implements ActionListener
         sqrtButton.addActionListener(this);
         frontButton.addActionListener(this);
         backButton.addActionListener(this);
+        settings.addActionListener(this);          //<--          addActionListener for the settingButton
 
         JPanel numPanel = new JPanel();
         numPanel.add(b1);
@@ -110,7 +127,7 @@ public class CalculatorGui implements ActionListener
         numPanel.add(b9);
         numPanel.add(b0);
 
-//        numPanel.add(addButton);        //<--
+//        numPanel.add(addButton);        //<--          add
         numPanel.add(minusButton);
         numPanel.add(divideButton);
         numPanel.add(mutiplyButton);
@@ -120,10 +137,10 @@ public class CalculatorGui implements ActionListener
         numPanel.add(clearButton);
         numPanel.add(enterButton);
 
-
         JPanel welcomePanel = new JPanel();
         welcomePanel.add(pictureLabel);
         welcomePanel.add(welcomeLabel);
+        welcomePanel.add(settings);                 //<--            settings
 
         Border border = BorderFactory.createLineBorder(Color.BLACK, 5);
         resultField.setBorder(border);
@@ -136,10 +153,11 @@ public class CalculatorGui implements ActionListener
         layout = new GridLayout(3, 5);
         frame.setLayout(layout);
 
+
         //length, width//
         numPanel.setSize(100, 100);
         welcomeLabel.setSize(100, 100);
-        frame.setSize(200, 505);
+        frame.setSize(200, 560);
         frame.setVisible(true);
 
     }
@@ -147,10 +165,12 @@ public class CalculatorGui implements ActionListener
     public void actionPerformed(ActionEvent e) {
         JButton button = (JButton) (e.getSource());
         String text = button.getText();
+//        Icon icon = button.getIcon();
 
         if ((text.equals("1"))|| (text.equals("2"))|| (text.equals("3"))|| (text.equals("4"))||
                 (text.equals("5"))|| (text.equals("6"))||(text.equals("7"))|| (text.equals("8"))||
-                (text.equals("9"))||(text.equals("0")));
+                (text.equals("9"))||(text.equals("0"))||(text.equals("-"))||(text.equals("/"))||(text.equals("*"))
+                ||(text.equals("sqrt("))||(text.equals("("))||(text.equals(")")))
         {
             num = num + text;
             resultField.setText(num);
@@ -180,6 +200,43 @@ public class CalculatorGui implements ActionListener
                 resultField.setText(c.makeAPICallForCurrent(numExpression));
             }
             System.out.println(numExpression);
+        }
+        if(button==settings)
+        {
+            newFrame = new JFrame("Settings");
+            JPanel newPanel = new JPanel();
+
+            newPanel.add(blue);
+            newPanel.add(white);
+            newPanel.add(gray);
+
+            JLabel newLabel = new JLabel("Settings");
+            newLabel.setFont(new Font("Helvetica", Font.BOLD, 15));
+            newLabel.setForeground(Color.black);
+
+
+            newFrame.add(newPanel, BorderLayout.CENTER);
+            newFrame.add(newLabel, BorderLayout.NORTH);
+            newFrame.setSize(50, 160);
+
+            newFrame.pack();
+            newFrame.setVisible(true);
+
+        }
+        if(text.equals("Blue"))
+        {
+            resultField.setBackground(Color.cyan);
+            newFrame.setVisible(false);
+        }
+        if(text.equals("White"))
+        {
+            resultField.setBackground(Color.white);
+            newFrame.setVisible(false);
+        }
+        if(text.equals("Gray"))
+        {
+            resultField.setBackground(Color.gray);
+            newFrame.setVisible(false);
         }
 
     }
