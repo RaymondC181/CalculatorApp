@@ -172,8 +172,10 @@ public class CalculatorGui implements ActionListener
                 (text.equals("9"))||(text.equals("0"))||(text.equals("-"))||(text.equals("/"))||(text.equals("*"))
                 ||(text.equals("sqrt("))||(text.equals("("))||(text.equals(")")))
         {
+            String temp = num.replace("%2B", "+");
+            temp+=text;
+            resultField.setText(temp);
             num = num + text;
-            resultField.setText(num);
         }
 
         if(text.equals("+"))                   //<-- addition
