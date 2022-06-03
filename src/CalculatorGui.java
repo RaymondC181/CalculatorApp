@@ -68,7 +68,7 @@ public class CalculatorGui implements ActionListener
         JLabel pictureLabel = new JLabel(image);
 
         frame.add(resultField);
-//        JButton addButton = new JButton("+");       //<---     addition button
+        JButton addButton = new JButton("+");       //<---     addition button
         JButton minusButton = new JButton("-");
         JButton divideButton = new JButton("/");
         JButton mutiplyButton = new JButton("*");
@@ -105,7 +105,7 @@ public class CalculatorGui implements ActionListener
         b9.addActionListener(this);
         b0.addActionListener(this);
         clearButton.addActionListener(this);
-//        addButton.addActionListener(this);       //<--      addActionListener for addition
+        addButton.addActionListener(this);       //<--      addActionListener for addition
         minusButton.addActionListener(this);
         divideButton.addActionListener(this);
         mutiplyButton.addActionListener(this);
@@ -127,7 +127,7 @@ public class CalculatorGui implements ActionListener
         numPanel.add(b9);
         numPanel.add(b0);
 
-//        numPanel.add(addButton);        //<--          add
+        numPanel.add(addButton);        //<--          add
         numPanel.add(minusButton);
         numPanel.add(divideButton);
         numPanel.add(mutiplyButton);
@@ -174,6 +174,14 @@ public class CalculatorGui implements ActionListener
         {
             num = num + text;
             resultField.setText(num);
+        }
+
+        if(text.equals("+"))                   //<-- addition
+        {
+            String temp = num;
+            temp+=text;
+            resultField.setText(temp);
+            num = num + "%2B";
         }
 
         if(text.equals("C"))
@@ -240,8 +248,5 @@ public class CalculatorGui implements ActionListener
         }
 
     }
-
-    //reference:
-    //https://stackoverflow.com/questions/3422673/how-to-evaluate-a-math-expression-given-in-string-form
 
 }
